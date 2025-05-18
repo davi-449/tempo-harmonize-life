@@ -28,20 +28,32 @@ export default function ProductivityMetrics() {
   const isDarkMode = document.documentElement.classList.contains('dark');
   const pieColors = isDarkMode ? DARK_COLORS : COLORS;
 
+  // Função para traduzir categorias
+  const translateCategory = (category: string): string => {
+    const translations: Record<string, string> = {
+      'personal': 'Pessoal',
+      'work': 'Trabalho',
+      'fitness': 'Academia',
+      'academic': 'Faculdade'
+    };
+    
+    return translations[category] || category;
+  };
+
   return (
     <div className="grid gap-4 md:grid-cols-2 animate-fade-in">
       {/* Productivity Score Card */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle>Weekly Productivity</CardTitle>
-          <CardDescription>Your task completion rate this week</CardDescription>
+          <CardTitle>Produtividade Semanal</CardTitle>
+          <CardDescription>Taxa de conclusão de tarefas desta semana</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center space-y-2">
             <div className="text-4xl font-bold">{productivityScore}%</div>
             <Progress value={productivityScore} className="w-full h-2" />
             <p className="text-sm text-muted-foreground">
-              {completedTasks.length} of {weeklyTasks.length} tasks completed
+              {completedTasks.length} de {weeklyTasks.length} tarefas concluídas
             </p>
           </div>
         </CardContent>
@@ -50,8 +62,8 @@ export default function ProductivityMetrics() {
       {/* Category Distribution Card */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle>Task Categories</CardTitle>
-          <CardDescription>Distribution of your tasks by category</CardDescription>
+          <CardTitle>Categorias de Tarefas</CardTitle>
+          <CardDescription>Distribuição de suas tarefas por categoria</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-[150px]">
@@ -68,7 +80,7 @@ export default function ProductivityMetrics() {
                   label={({ name }) => {
                     // Ensure name is a string before calling charAt and slice
                     if (typeof name === 'string') {
-                      return name.charAt(0).toUpperCase() + name.slice(1);
+                      return translateCategory(name);
                     }
                     return name;
                   }}
@@ -82,11 +94,11 @@ export default function ProductivityMetrics() {
                   formatter={(value, name) => {
                     if (typeof name === 'string') {
                       return [
-                        `${value} tasks`, 
-                        name.charAt(0).toUpperCase() + name.slice(1)
+                        `${value} tarefas`, 
+                        translateCategory(name)
                       ];
                     }
-                    return [`${value} tasks`, name];
+                    return [`${value} tarefas`, name];
                   }} 
                 />
               </PieChart>

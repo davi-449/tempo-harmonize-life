@@ -31,16 +31,27 @@ export function CategoryBadge({ category, className }: CategoryBadgeProps) {
     return colors[category];
   };
 
+  const getCategoryName = (category: TaskCategory) => {
+    const names: Record<TaskCategory, string> = {
+      personal: 'Pessoal',
+      work: 'Trabalho',
+      fitness: 'Academia',
+      academic: 'Faculdade',
+    };
+    
+    return names[category];
+  };
+
   const { bg, text } = getCategoryColor(category);
 
   return (
     <span className={cn(
-      'category-badge',
+      'category-badge text-xs px-2 py-1 rounded-full font-medium',
       bg,
       text,
       className
     )}>
-      {category.charAt(0).toUpperCase() + category.slice(1)}
+      {getCategoryName(category)}
     </span>
   );
 }

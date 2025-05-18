@@ -1,7 +1,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-export interface User {
+interface User {
   id: string;
   name: string;
   email: string;
@@ -11,9 +11,10 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, rememberMe?: boolean) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
+  updateUserProfile: (data: Partial<User>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,10 +29,9 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is stored in localStorage (simulating persistence)
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -39,61 +39,82 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string) => {
-    // Simulated login - to be replaced with Supabase authentication
-    setIsLoading(true);
+  const login = async (email: string, password: string, rememberMe = false) => {
     try {
+      // Simulating API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
       // Simple validation
-      if (!email || !password) {
-        throw new Error('Email and password are required');
+      if (email.trim() === '' || password.trim() === '') {
+        throw new Error('E-mail e senha são obrigatórios');
       }
       
-      // Create a fake user for demo purposes
-      const newUser = {
-        id: `user-${Date.now()}`,
+      // Demo authentication
+      const userData = {
+        id: 'user-1',
         name: email.split('@')[0],
         email
       };
       
-      setUser(newUser);
-      localStorage.setItem('user', JSON.stringify(newUser));
+      setUser(userData);
+      
+      if (rememberMe) {
+        localStorage.setItem('user', JSON.stringify(userData));
+      }
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const register = async (name: string, email: string, password: string) => {
-    // Simulated registration - to be replaced with Supabase authentication
-    setIsLoading(true);
     try {
+      // Simulating API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
       // Simple validation
-      if (!name || !email || !password) {
-        throw new Error('Name, email, and password are required');
+      if (name.trim() === '' || email.trim() === '' || password.trim() === '') {
+        throw new Error('Todos os campos são obrigatórios');
       }
       
-      // Create a fake user for demo purposes
-      const newUser = {
+      // Demo registration
+      const userData = {
         id: `user-${Date.now()}`,
         name,
         email
       };
       
-      setUser(newUser);
-      localStorage.setItem('user', JSON.stringify(newUser));
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
     } catch (error) {
       console.error('Registration failed:', error);
       throw error;
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
+  };
+  
+  const updateUserProfile = async (data: Partial<User>) => {
+    try {
+      if (!user) throw new Error('Usuário não autenticado');
+      
+      // Simulando API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const updatedUser = {
+        ...user,
+        ...data
+      };
+      
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+    } catch (error) {
+      console.error('Update profile failed:', error);
+      throw error;
+    }
   };
 
   const value = {
@@ -102,10 +123,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading,
     login,
     register,
-    logout
+    logout,
+    updateUserProfile
   };
 
   return (
-    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
   );
 };

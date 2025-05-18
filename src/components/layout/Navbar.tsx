@@ -6,6 +6,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Calendar, CheckIcon, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ModeToggle } from './ModeToggle';
+import NotificationsMenu from '../notifications/NotificationsMenu';
 
 interface NavbarProps {
   onNewTask: () => void;
@@ -55,39 +56,32 @@ export default function Navbar({ onNewTask }: NavbarProps) {
             className="hidden sm:flex items-center"
           >
             <Plus className="mr-1 h-4 w-4" />
-            New Task
+            Nova Tarefa
           </Button>
           
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={onNewTask}
-            className="sm:hidden"
-          >
-            <Plus className="h-4 w-4" />
-          </Button>
+          <NotificationsMenu />
           
           <ModeToggle />
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="relative rounded-full h-8 w-8 p-0">
-                <span className="sr-only">Open user menu</span>
+                <span className="sr-only">Abrir menu do usuário</span>
                 <div className="rounded-full bg-primary text-primary-foreground font-medium flex items-center justify-center h-full w-full">
                   {user?.name.charAt(0).toUpperCase()}
                 </div>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
               <DropdownMenuItem disabled>{user?.email}</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link to="/settings">Settings</Link>
+                <Link to="/settings">Configurações</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => logout()}>
-                Log out
+                Sair
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

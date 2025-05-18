@@ -6,10 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { format } from 'date-fns';
-import { CheckIcon, CalendarIcon, EditIcon, TrashIcon } from 'lucide-react';
+import { ptBR } from 'date-fns/locale';
+import { CheckIcon, CalendarIcon, EditIcon, TrashIcon, Clock, Share2, ArrowRight } from 'lucide-react';
 import TaskForm from './TaskForm';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import TaskDetail from './TaskDetail';
 
 interface TaskListProps {
   tasks: Task[];
@@ -17,13 +19,14 @@ interface TaskListProps {
   emptyMessage?: string;
 }
 
-export default function TaskList({ tasks, title = 'Tasks', emptyMessage = 'No tasks found' }: TaskListProps) {
+export default function TaskList({ tasks, title = 'Tarefas', emptyMessage = 'Nenhuma tarefa encontrada' }: TaskListProps) {
   const { toggleCompleted, deleteTask } = useTask();
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [viewingTask, setViewingTask] = useState<Task | null>(null);
 
   const handleTaskComplete = (taskId: string) => {
     toggleCompleted(taskId);
-    toast.success('Task status updated');
+    toast.success('Status da tarefa atualizado');
   };
 
   const handleEditTask = (task: Task) => {
@@ -32,7 +35,11 @@ export default function TaskList({ tasks, title = 'Tasks', emptyMessage = 'No ta
 
   const handleDeleteTask = (taskId: string) => {
     deleteTask(taskId);
-    toast.success('Task deleted');
+    toast.success('Tarefa excluída');
+  };
+
+  const handleViewTask = (task: Task) => {
+    setViewingTask(task);
   };
 
   const getPriorityClass = (priority: string) => {
@@ -46,6 +53,15 @@ export default function TaskList({ tasks, title = 'Tasks', emptyMessage = 'No ta
       default:
         return '';
     }
+  };
+
+  const getPriorityText = (priority: string) => {
+    const translations: Record<string, string> = {
+      'high': 'Alta',
+      'medium': 'Média',
+      'low': 'Baixa'
+    };
+    return translations[priority] || priority;
   };
 
   return (
@@ -63,14 +79,20 @@ export default function TaskList({ tasks, title = 'Tasks', emptyMessage = 'No ta
               key={task.id} 
               className={cn(
                 "task-card animate-fade-in",
-                task.completed && "opacity-60"
+                task.completed ? "opacity-60" : "",
+                "cursor-pointer hover:shadow-md transition-all"
               )}
+              onClick={() => handleViewTask(task)}
             >
               <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
                 <div className="flex items-center space-x-2">
                   <Checkbox 
                     checked={task.completed}
-                    onCheckedChange={() => handleTaskComplete(task.id)}
+                    onCheckedChange={(checked) => {
+                      handleTaskComplete(task.id);
+                      // Prevent opening task details when clicking checkbox
+                      event?.stopPropagation();
+                    }}
                     className="h-5 w-5"
                   />
                   <CardTitle className={cn(
@@ -84,32 +106,48 @@ export default function TaskList({ tasks, title = 'Tasks', emptyMessage = 'No ta
               </CardHeader>
               
               {task.description && (
-                <CardContent className="pt-2 text-sm text-muted-foreground">
-                  <p>{task.description}</p>
+                <CardContent className="pt-2 pb-0 text-sm text-muted-foreground">
+                  <p className="line-clamp-2">{task.description}</p>
                 </CardContent>
               )}
               
               <CardFooter className="flex justify-between items-center pt-4">
-                <div className="flex items-center text-xs text-muted-foreground">
-                  <CalendarIcon className="h-3 w-3 mr-1" />
-                  <span>Due: {format(new Date(task.dueDate), 'MMM d, yyyy')}</span>
-                  <span className={cn("ml-2 font-medium", getPriorityClass(task.priority))}>
-                    • {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)} priority
+                <div className="flex flex-col xs:flex-row xs:items-center text-xs text-muted-foreground gap-1 xs:gap-2">
+                  <div className="flex items-center">
+                    <CalendarIcon className="h-3 w-3 mr-1" />
+                    <span>Vencimento: {format(new Date(task.dueDate), "dd/MM/yyyy", { locale: ptBR })}</span>
+                  </div>
+                  
+                  {task.startTime && (
+                    <div className="flex items-center">
+                      <Clock className="h-3 w-3 mr-1" />
+                      <span>{task.startTime} {task.endTime ? `- ${task.endTime}` : ''}</span>
+                    </div>
+                  )}
+                  
+                  <span className={cn("font-medium", getPriorityClass(task.priority))}>
+                    • Prioridade {getPriorityText(task.priority)}
                   </span>
                 </div>
                 
-                <div className="flex space-x-2">
+                <div className="flex space-x-1" onClick={e => e.stopPropagation()}>
                   <Button 
                     variant="ghost" 
                     size="icon"
-                    onClick={() => handleEditTask(task)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditTask(task);
+                    }}
                   >
                     <EditIcon className="h-4 w-4" />
                   </Button>
                   <Button 
                     variant="ghost" 
                     size="icon"
-                    onClick={() => handleDeleteTask(task.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteTask(task.id);
+                    }}
                   >
                     <TrashIcon className="h-4 w-4" />
                   </Button>
@@ -131,6 +169,23 @@ export default function TaskList({ tasks, title = 'Tasks', emptyMessage = 'No ta
             dueDate: editingTask.dueDate,
             category: editingTask.category,
             priority: editingTask.priority,
+          }}
+        />
+      )}
+      
+      {viewingTask && (
+        <TaskDetail
+          task={viewingTask}
+          isOpen={!!viewingTask}
+          onClose={() => setViewingTask(null)}
+          onEdit={() => {
+            setEditingTask(viewingTask);
+            setViewingTask(null);
+          }}
+          onDelete={() => {
+            deleteTask(viewingTask.id);
+            setViewingTask(null);
+            toast.success('Tarefa excluída');
           }}
         />
       )}
