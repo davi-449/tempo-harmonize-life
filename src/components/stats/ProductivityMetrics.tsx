@@ -65,7 +65,13 @@ export default function ProductivityMetrics() {
                   outerRadius={70}
                   paddingAngle={5}
                   dataKey="value"
-                  label={({ name }) => name.charAt(0).toUpperCase() + name.slice(1)}
+                  label={({ name }) => {
+                    // Ensure name is a string before calling charAt and slice
+                    if (typeof name === 'string') {
+                      return name.charAt(0).toUpperCase() + name.slice(1);
+                    }
+                    return name;
+                  }}
                   labelLine={false}
                 >
                   {categoryData.map((entry, index) => (
@@ -73,10 +79,15 @@ export default function ProductivityMetrics() {
                   ))}
                 </Pie>
                 <Tooltip 
-                  formatter={(value, name) => [
-                    `${value} tasks`, 
-                    name.charAt(0).toUpperCase() + name.slice(1)
-                  ]} 
+                  formatter={(value, name) => {
+                    if (typeof name === 'string') {
+                      return [
+                        `${value} tasks`, 
+                        name.charAt(0).toUpperCase() + name.slice(1)
+                      ];
+                    }
+                    return [`${value} tasks`, name];
+                  }} 
                 />
               </PieChart>
             </ResponsiveContainer>
