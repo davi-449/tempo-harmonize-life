@@ -6,7 +6,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { format, subDays, startOfWeek, endOfWeek, eachDayOfInterval, getWeek } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
-import { getCategoryDistribution, getCompletedTasks, getTasksInDateRange } from '@/utils/taskUtils';
+import { getCategoryDistribution, getCompletedTasks, getTasksByDateRange } from '@/utils/taskUtils';
 
 export default function ProductivityAnalytics() {
   const { tasks } = useTask();
@@ -23,7 +23,7 @@ export default function ProductivityAnalytics() {
   };
 
   const startDate = getStartDate();
-  const tasksInRange = getTasksInDateRange(tasks, startDate, now);
+  const tasksInRange = getTasksByDateRange(tasks, startDate, now);
   const completedTasks = getCompletedTasks(tasksInRange);
   const overdueCount = tasksInRange.filter(task => !task.completed && new Date(task.dueDate) < now).length;
   const completionRate = tasksInRange.length > 0 ? Math.round((completedTasks.length / tasksInRange.length) * 100) : 0;

@@ -1,10 +1,9 @@
-
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Task, useTask } from '@/context/TaskContext';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { CalendarIcon, Clock, Edit, Trash2, Share2, AlertCircle, SkipForward } from 'lucide-react';
+import { CalendarIcon, Clock, Edit, Trash2, Share2, AlertCircle, SkipForward, Check } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { useState } from 'react';
@@ -244,7 +243,7 @@ export default function TaskDetail({ task, isOpen, onClose, onEdit, onDelete }: 
                 className="w-full" 
                 onClick={handleTaskComplete}
               >
-                <CheckIcon className="mr-2 h-4 w-4" />
+                <Check className="mr-2 h-4 w-4" />
                 {task.completed ? 'Desmarcar' : 'Concluir'}
               </Button>
               

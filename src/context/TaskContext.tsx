@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
 
@@ -15,6 +14,11 @@ export interface Task {
   userId: string;
   createdAt: Date;
   updatedAt: Date;
+  startTime?: string;
+  endTime?: string;
+  isRecurring?: boolean;
+  recurrenceType?: 'daily' | 'weekly' | 'monthly';
+  reminderTime?: number;
 }
 
 interface TaskContextType {
