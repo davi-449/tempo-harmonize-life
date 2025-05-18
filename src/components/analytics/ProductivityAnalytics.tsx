@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useTask } from '@/context/TaskContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -71,7 +70,7 @@ export default function ProductivityAnalytics() {
       const endOfWeekDate = subDays(endOfWeek(now), i * 7);
       const startOfWeekDate = startOfWeek(endOfWeekDate);
       
-      const weekTasks = getTasksInDateRange(tasks, startOfWeekDate, endOfWeekDate);
+      const weekTasks = getTasksByDateRange(tasks, startOfWeekDate, endOfWeekDate);
       const weekCompleted = weekTasks.filter(task => task.completed).length;
       const weekRate = weekTasks.length > 0 ? Math.round((weekCompleted / weekTasks.length) * 100) : 0;
       
@@ -246,7 +245,7 @@ export default function ProductivityAnalytics() {
                   ))}
                 </Pie>
                 <Tooltip 
-                  formatter={(value, name) => [`${value} tarefas`, name]}
+                  formatter={(value) => [`${value} tarefas`, name]}
                 />
               </PieChart>
             </ResponsiveContainer>
