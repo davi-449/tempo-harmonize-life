@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CheckIcon, CalendarClock, Layers3, Activity, Loader2, GoogleCalendar } from 'lucide-react';
+import { CheckIcon, CalendarClock, Layers3, Activity, Loader2, Calendar } from 'lucide-react';
 
 export default function IntegrationsSettings() {
   const [isConnecting, setIsConnecting] = useState(false);
@@ -80,7 +79,7 @@ export default function IntegrationsSettings() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <div className="p-2 rounded-full bg-white shadow-sm">
-                    <GoogleCalendar className="h-6 w-6 text-[#4285F4]" />
+                    <Calendar className="h-6 w-6 text-[#4285F4]" />
                   </div>
                   <div>
                     <CardTitle>Google Calendar</CardTitle>
@@ -159,7 +158,7 @@ export default function IntegrationsSettings() {
                       </>
                     ) : (
                       <>
-                        <GoogleCalendar className="mr-2 h-4 w-4" />
+                        <Calendar className="mr-2 h-4 w-4" />
                         Conectar com Google Calendar
                       </>
                     )}
