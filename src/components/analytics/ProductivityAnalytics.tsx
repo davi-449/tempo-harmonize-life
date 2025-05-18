@@ -245,7 +245,7 @@ export default function ProductivityAnalytics() {
                   ))}
                 </Pie>
                 <Tooltip 
-                  formatter={(value) => [`${value} tarefas`, name]}
+                  formatter={(value, name) => [`${value} tarefas`, name]}
                 />
               </PieChart>
             </ResponsiveContainer>
