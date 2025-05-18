@@ -2,6 +2,7 @@
 import AppLayout from "@/components/layout/AppLayout";
 import NotificationSettings from "@/components/settings/NotificationSettings";
 import UserSettings from "@/components/settings/UserSettings";
+import IntegrationsSettings from "@/components/settings/IntegrationsSettings";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const SettingsPage = () => {
@@ -19,6 +20,7 @@ const SettingsPage = () => {
           <TabsList className="mb-8">
             <TabsTrigger value="profile">Perfil</TabsTrigger>
             <TabsTrigger value="notifications">Notificações</TabsTrigger>
+            <TabsTrigger value="integrations">Integrações</TabsTrigger>
           </TabsList>
 
           <TabsContent value="profile">
@@ -27,6 +29,10 @@ const SettingsPage = () => {
           
           <TabsContent value="notifications">
             <NotificationSettings />
+          </TabsContent>
+          
+          <TabsContent value="integrations">
+            <IntegrationsSettings />
           </TabsContent>
         </Tabs>
       </div>
