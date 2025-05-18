@@ -1,4 +1,5 @@
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -7,8 +8,15 @@ import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CheckIcon, CalendarClock, Layers3, Activity, Loader2, Calendar } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { getTokens, initiateGoogleAuth } from '@/services/googleAuth';
+import { syncTasksWithGoogleCalendar, syncHealthDataWithGoogleFit } from '@/services/syncService';
+import { useTask } from '@/context/TaskContext';
+import SyncStatus from '@/components/integrations/SyncStatus';
 
 export default function IntegrationsSettings() {
+  const { user } = useAuth();
+  const { tasks } = useTask();
   const [isConnecting, setIsConnecting] = useState(false);
   const [googleCalendarConnected, setGoogleCalendarConnected] = useState(false);
   const [googleFitConnected, setGoogleFitConnected] = useState(false);
@@ -20,36 +28,66 @@ export default function IntegrationsSettings() {
     correlateProductivity: true
   });
   
+  // Check for existing Google connections
+  useEffect(() => {
+    if (user) {
+      const tokens = getTokens(user.id);
+      if (tokens) {
+        setGoogleCalendarConnected(true);
+        setGoogleFitConnected(true);
+      }
+    }
+  }, [user]);
+  
   const handleConnectGoogleCalendar = () => {
     setIsConnecting(true);
     
-    // Simulação de conexão
-    setTimeout(() => {
+    try {
+      initiateGoogleAuth();
+      // No need to set isConnecting to false as we're redirecting away
+    } catch (error) {
+      console.error("Error connecting to Google Calendar:", error);
       setIsConnecting(false);
-      setGoogleCalendarConnected(true);
-      toast.success('Conectado com Google Calendar com sucesso!');
-    }, 2000);
+      toast.error("Falha ao conectar com Google Calendar");
+    }
   };
   
   const handleDisconnectGoogleCalendar = () => {
-    setGoogleCalendarConnected(false);
-    toast("Google Calendar desconectado");
+    // In a real app, revoke access token
+    // For now, just remove from localStorage
+    if (user) {
+      localStorage.removeItem(`google_tokens_${user.id}`);
+      setGoogleCalendarConnected(false);
+      toast("Google Calendar desconectado");
+    }
   };
   
   const handleConnectGoogleFit = () => {
-    setIsConnecting(true);
-    
-    // Simulação de conexão
-    setTimeout(() => {
-      setIsConnecting(false);
-      setGoogleFitConnected(true);
-      toast.success('Conectado com Google Fit com sucesso!');
-    }, 2000);
+    // Google Fit uses the same OAuth flow as Calendar with the required scopes
+    handleConnectGoogleCalendar();
   };
   
   const handleDisconnectGoogleFit = () => {
-    setGoogleFitConnected(false);
-    toast("Google Fit desconectado");
+    // Since we're using the same tokens, this is the same as disconnecting Calendar
+    handleDisconnectGoogleCalendar();
+  };
+  
+  const handleSyncCalendar = async () => {
+    if (user && tasks) {
+      const result = await syncTasksWithGoogleCalendar(user.id, tasks);
+      if (!result.success) {
+        toast.error("Falha ao sincronizar com Google Calendar");
+      }
+    }
+  };
+  
+  const handleSyncHealth = async () => {
+    if (user) {
+      const result = await syncHealthDataWithGoogleFit(user.id);
+      if (!result.success) {
+        toast.error("Falha ao sincronizar com Google Fit");
+      }
+    }
   };
   
   const [healthData, setHealthData] = useState({
@@ -142,6 +180,17 @@ export default function IntegrationsSettings() {
                       />
                     </div>
                   </div>
+
+                  <div className="flex justify-center mt-4">
+                    <Button 
+                      variant="outline" 
+                      className="w-full" 
+                      onClick={handleSyncCalendar}
+                    >
+                      <CalendarClock className="mr-2 h-4 w-4" />
+                      Sincronizar agora
+                    </Button>
+                  </div>
                 </>
               ) : (
                 <div className="flex flex-col items-center justify-center py-4 space-y-2">
@@ -169,7 +218,7 @@ export default function IntegrationsSettings() {
             {googleCalendarConnected && (
               <CardFooter className="bg-muted/50 px-6 py-3">
                 <div className="flex justify-between items-center w-full">
-                  <p className="text-xs text-muted-foreground">Última sincronização: 18/05/2025, 10:45</p>
+                  <SyncStatus type="calendar" />
                   <Button 
                     variant="outline" 
                     size="sm"
@@ -239,15 +288,24 @@ export default function IntegrationsSettings() {
                       />
                     </div>
                   </div>
+
+                  <div className="flex justify-center mt-4">
+                    <Button 
+                      variant="outline" 
+                      className="w-full" 
+                      onClick={handleSyncHealth}
+                    >
+                      <Activity className="mr-2 h-4 w-4" />
+                      Sincronizar dados de saúde
+                    </Button>
+                  </div>
                   
                   <Separator className="my-4" />
                   
                   <div>
-                    <h4 className="text-sm font-medium mb-3">Prévia: Saúde e Produtividade</h4>
-                    <div className="bg-muted/50 rounded-lg p-4 text-center">
-                      <p className="text-sm text-muted-foreground">
-                        Os gráficos de correlação entre saúde e produtividade aparecerão aqui após a sincronização dos dados.
-                      </p>
+                    <h4 className="text-sm font-medium mb-3">Status da Sincronização</h4>
+                    <div className="bg-muted/50 rounded-lg p-4">
+                      <SyncStatus type="health" />
                     </div>
                   </div>
                 </>
@@ -277,7 +335,7 @@ export default function IntegrationsSettings() {
             {googleFitConnected && (
               <CardFooter className="bg-muted/50 px-6 py-3">
                 <div className="flex justify-between items-center w-full">
-                  <p className="text-xs text-muted-foreground">Última sincronização: 18/05/2025, 10:45</p>
+                  <p className="text-xs text-muted-foreground">Use os mesmos dados de autenticação do Google Calendar</p>
                   <Button 
                     variant="outline" 
                     size="sm"

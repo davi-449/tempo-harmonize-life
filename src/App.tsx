@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./context/AuthContext";
 import { TaskProvider } from "./context/TaskContext";
 import { NotificationsProvider } from "./context/NotificationsContext";
+import GoogleAuthCallback from "@/components/auth/GoogleAuthCallback";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +30,7 @@ const AnimatedRoutes = () => {
         <Route path="/analytics" element={<AnalyticsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/notifications" element={<NotificationsPage />} />
+        <Route path="/auth/callback" element={<GoogleAuthCallback />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>

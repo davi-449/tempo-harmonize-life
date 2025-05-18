@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -10,6 +9,7 @@ import { motion } from 'framer-motion';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Apple, ArrowRight, AtSign, Facebook, Github, Loader2, Lock, Mail, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import GoogleAuthButton from './GoogleAuthButton';
 
 export default function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
