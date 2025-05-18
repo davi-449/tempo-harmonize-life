@@ -5,6 +5,7 @@ import TaskForm from '../tasks/TaskForm';
 import { useAuth } from '@/context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import BottomNavigation from './BottomNavigation';
+import { motion } from 'framer-motion';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -30,9 +31,14 @@ export default function AppLayout({ children }: AppLayoutProps) {
     <div className="min-h-screen flex flex-col">
       <Navbar onNewTask={() => setIsTaskFormOpen(true)} />
       
-      <main className="flex-1 container mx-auto px-4 py-6 mb-16">
+      <motion.main 
+        className="flex-1 container mx-auto px-4 py-6 mb-16"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
         {children}
-      </main>
+      </motion.main>
       
       <BottomNavigation onAddTask={() => setIsTaskFormOpen(true)} />
       <TaskForm isOpen={isTaskFormOpen} onClose={() => setIsTaskFormOpen(false)} />
