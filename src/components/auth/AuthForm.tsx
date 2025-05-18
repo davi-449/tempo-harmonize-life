@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Apple, ArrowRight, AtSign, Facebook, Github, Google, Loader2, Lock, User } from 'lucide-react';
+import { Apple, ArrowRight, AtSign, Facebook, Github, Loader2, Lock, Mail, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function AuthForm() {
@@ -40,7 +39,7 @@ export default function AuthForm() {
   };
   
   const socialLoginButtons = [
-    { icon: <Google className="h-5 w-5" />, name: "Google", color: "hover:bg-red-50 dark:hover:bg-red-950/30" },
+    { icon: <Mail className="h-5 w-5" />, name: "Google", color: "hover:bg-red-50 dark:hover:bg-red-950/30" },
     { icon: <Apple className="h-5 w-5" />, name: "Apple", color: "hover:bg-gray-50 dark:hover:bg-gray-950/30" },
     { icon: <Facebook className="h-5 w-5" />, name: "Facebook", color: "hover:bg-blue-50 dark:hover:bg-blue-950/30" },
     { icon: <Github className="h-5 w-5" />, name: "Github", color: "hover:bg-gray-50 dark:hover:bg-gray-950/30" },
