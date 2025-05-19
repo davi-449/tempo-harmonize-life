@@ -1,9 +1,10 @@
-import { supabase } from "@/integrations/supabase/client";
 
-// Google OAuth configuration
-export const googleConfig = {
+import { supabase } from '@/integrations/supabase/client';
+
+// Configuração do OAuth do Google
+const googleConfig = {
   clientId: '237044112540-6130kmfv9daos4758tpqbdf2aampdb63.apps.googleusercontent.com',
-  redirectUri: 'tempo-harmonize-life.lovable.app/auth/callback',
+  redirectUri: window.location.origin + '/auth/callback',
   scopes: [
     'https://www.googleapis.com/auth/calendar',
     'https://www.googleapis.com/auth/fitness.activity.read',
@@ -12,116 +13,129 @@ export const googleConfig = {
   ]
 };
 
-// Generate the Google OAuth URL
-export const getGoogleAuthUrl = () => {
+// Função para iniciar o fluxo de autenticação
+export const initiateGoogleAuth = () => {
   const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleConfig.clientId}&redirect_uri=${encodeURIComponent(googleConfig.redirectUri)}&response_type=code&scope=${encodeURIComponent(googleConfig.scopes.join(' '))}&access_type=offline&prompt=consent`;
   
-  return authUrl;
+  window.location.href = authUrl;
 };
 
-// Start the Google authentication flow
-export const initiateGoogleAuth = () => {
-  window.location.href = getGoogleAuthUrl();
-};
-
-// Store tokens securely in Supabase or localStorage as a temporary solution
-export const storeTokens = async (userId: string, tokens: GoogleTokens) => {
-  try {
-    // Store in localStorage for now
-    localStorage.setItem(`google_tokens_${userId}`, JSON.stringify(tokens));
-    
-    // In future will store in Supabase
-    // await supabase
-    //   .from('user_tokens')
-    //   .upsert({ user_id: userId, tokens: tokens, provider: 'google' });
-
-    return true;
-  } catch (error) {
-    console.error("Failed to store tokens:", error);
-    return false;
-  }
-};
-
-// Get tokens from storage
-export const getTokens = (userId: string): GoogleTokens | null => {
-  try {
-    const tokensString = localStorage.getItem(`google_tokens_${userId}`);
-    if (!tokensString) return null;
-    
-    return JSON.parse(tokensString);
-  } catch (error) {
-    console.error("Failed to retrieve tokens:", error);
-    return null;
-  }
-};
-
-// Process the authentication callback code
+// Função para processar o callback de autenticação
 export const handleAuthCallback = async (code: string, userId: string) => {
   try {
-    // This would normally be handled by a server-side function to keep client_secret private
-    // For now, we'll implement a simplified version
+    // Trocar o código por tokens de acesso e refresh
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        code,
+        client_id: googleConfig.clientId,
+        redirect_uri: googleConfig.redirectUri,
+        grant_type: 'authorization_code',
+      }),
+    });
+
+    const tokenData = await tokenResponse.json();
     
-    // In real implementation, call an edge function to exchange code for tokens
-    // const { data, error } = await supabase.functions.invoke('exchange-google-code', {
-    //   body: { code }
-    // });
+    if (tokenData.error) {
+      console.error('Error exchanging code for tokens:', tokenData.error);
+      return { success: false, error: tokenData.error_description || 'Falha ao obter tokens de acesso' };
+    }
     
-    // Mocking a successful token retrieval
-    const mockTokens: GoogleTokens = {
-      access_token: `mock_access_token_${Date.now()}`,
-      refresh_token: `mock_refresh_token_${Date.now()}`,
-      expires_at: Date.now() + 3600 * 1000 // 1 hour from now
-    };
+    // Armazenar tokens no Supabase
+    const { data, error } = await supabase
+      .from('user_integrations')
+      .upsert({
+        user_id: userId,
+        provider: 'google',
+        access_token: tokenData.access_token,
+        refresh_token: tokenData.refresh_token,
+        token_expires_at: new Date(Date.now() + tokenData.expires_in * 1000).toISOString(),
+        scopes: googleConfig.scopes,
+        sync_status: { last_sync: null },
+      })
+      .select();
     
-    // Store the tokens
-    await storeTokens(userId, mockTokens);
+    if (error) {
+      console.error('Error storing Google tokens:', error);
+      return { success: false, error: 'Falha ao armazenar tokens de autenticação' };
+    }
     
-    return { success: true, tokens: mockTokens };
+    return { success: true, data };
   } catch (error) {
-    console.error("Error processing authentication callback:", error);
-    return { success: false, error };
+    console.error('Error in handleAuthCallback:', error);
+    return { success: false, error: 'Erro na autenticação com o Google' };
   }
 };
 
-// Check if access token is expired and refresh if needed
-export const ensureValidToken = async (userId: string): Promise<string | null> => {
+// Função para obter tokens armazenados
+export const getTokens = async (userId: string) => {
   try {
-    const tokens = getTokens(userId);
-    if (!tokens) return null;
+    const { data, error } = await supabase
+      .from('user_integrations')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('provider', 'google')
+      .single();
     
-    const currentTime = Date.now();
+    if (error || !data) return null;
     
-    // Check if token is expired
-    if (tokens.expires_at && tokens.expires_at <= currentTime) {
-      // Token is expired, need to refresh
-      // In real implementation, call an edge function to refresh token
-      // const { data, error } = await supabase.functions.invoke('refresh-google-token', {
-      //   body: { refresh_token: tokens.refresh_token }
-      // });
-      
-      // Mock a successful token refresh
-      const newTokens: GoogleTokens = {
-        access_token: `mock_refreshed_access_token_${Date.now()}`,
-        refresh_token: tokens.refresh_token,
-        expires_at: Date.now() + 3600 * 1000 // 1 hour from now
-      };
-      
-      // Store the new tokens
-      await storeTokens(userId, newTokens);
-      
-      return newTokens.access_token;
+    // Verificar se o token expirou
+    const tokenExpired = new Date(data.token_expires_at) < new Date();
+    
+    if (tokenExpired && data.refresh_token) {
+      return await refreshToken(data);
     }
     
-    return tokens.access_token;
+    return data;
   } catch (error) {
-    console.error("Error ensuring valid token:", error);
+    console.error('Error getting tokens:', error);
     return null;
   }
 };
 
-// Interface for Google OAuth tokens
-export interface GoogleTokens {
-  access_token: string;
-  refresh_token?: string;
-  expires_at?: number;
+// Função para atualizar o token quando expirar
+async function refreshToken(integration: any) {
+  try {
+    const refreshResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        refresh_token: integration.refresh_token,
+        client_id: googleConfig.clientId,
+        grant_type: 'refresh_token',
+      }),
+    });
+
+    const refreshData = await refreshResponse.json();
+    
+    if (refreshData.error) {
+      console.error('Error refreshing token:', refreshData.error);
+      return null;
+    }
+    
+    // Atualizar tokens no Supabase
+    const { data, error } = await supabase
+      .from('user_integrations')
+      .update({
+        access_token: refreshData.access_token,
+        token_expires_at: new Date(Date.now() + refreshData.expires_in * 1000).toISOString(),
+      })
+      .eq('id', integration.id)
+      .select();
+    
+    if (error) {
+      console.error('Error updating refreshed token:', error);
+      return null;
+    }
+    
+    return data[0];
+  } catch (error) {
+    console.error('Error in refreshToken:', error);
+    return null;
+  }
 }

@@ -1,9 +1,11 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
+import { useEffect } from "react";
 import Index from "./pages/Index";
 import DashboardPage from "./pages/DashboardPage";
 import CalendarPage from "./pages/CalendarPage";
@@ -15,11 +17,24 @@ import { AuthProvider } from "./context/AuthContext";
 import { TaskProvider } from "./context/TaskContext";
 import { NotificationsProvider } from "./context/NotificationsContext";
 import GoogleAuthCallback from "@/components/auth/GoogleAuthCallback";
+import { initSyncService } from "@/services/syncService";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000, // 1 minuto
+      retry: 1,
+    },
+  },
+});
 
 const AnimatedRoutes = () => {
   const location = useLocation();
+  
+  useEffect(() => {
+    // Inicializar o serviço de sincronização
+    initSyncService();
+  }, []);
   
   return (
     <AnimatePresence mode="wait">

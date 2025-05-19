@@ -3,17 +3,38 @@ import { Button } from "@/components/ui/button";
 import { initiateGoogleAuth } from "@/services/googleAuth";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export default function GoogleAuthButton() {
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
 
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     try {
-      initiateGoogleAuth();
-      // No need to set isLoading to false as we're redirecting away
+      if (!user) {
+        // Para login/registro com Google via Supabase
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: window.location.origin,
+          },
+        });
+        
+        if (error) {
+          throw new Error(error.message);
+        }
+        
+        // O redirecionamento é tratado pelo Supabase
+      } else {
+        // Para integração do Google (Calendar, Fit, etc.)
+        initiateGoogleAuth();
+      }
     } catch (error) {
       console.error("Google auth error:", error);
+      toast.error("Erro na autenticação com Google");
       setIsLoading(false);
     }
   };
