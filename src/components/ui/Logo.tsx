@@ -31,12 +31,12 @@ export default function Logo({ className, showText = true, size = 'md' }: LogoPr
   return (
     <Link to="/" className={cn("flex items-center space-x-2 group", className)}>
       <div className={cn("relative", sizeMap[size].container)}>
-        <div className="absolute inset-0 rounded-full bg-kairos-blue-deep dark:bg-kairos-dark border-2 border-kairos-blue-deep dark:border-kairos-purple flex items-center justify-center">
-          <Check className={cn("text-white kairos-check", sizeMap[size].icon)} />
+        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-kairos-blue-light to-kairos-purple dark:from-kairos-purple dark:to-kairos-blue-light border border-kairos-blue-light/20 dark:border-kairos-purple/20 flex items-center justify-center shadow-md overflow-hidden">
+          <Check className={cn("text-white", sizeMap[size].icon)} />
         </div>
       </div>
       {showText && (
-        <span className={cn("font-bold text-kairos-blue-deep dark:text-white", sizeMap[size].text)}>
+        <span className={cn("font-bold bg-gradient-to-r from-kairos-blue-deep to-kairos-purple dark:from-kairos-blue-light dark:to-kairos-purple bg-clip-text text-transparent transition-colors", sizeMap[size].text)}>
           KAIROS
         </span>
       )}
