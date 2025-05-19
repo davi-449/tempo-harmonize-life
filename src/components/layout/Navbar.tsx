@@ -42,6 +42,20 @@ export default function Navbar({ onNewTask }: NavbarProps) {
     navigate('/notifications');
   };
 
+  // Get the user's initials or a fallback
+  const getUserInitial = () => {
+    // Check if user and user.profile exist first
+    if (user?.profile?.name) {
+      return user.profile.name.charAt(0).toUpperCase();
+    }
+    // Fallback to email initial if name is not available
+    if (user?.email) {
+      return user.email.charAt(0).toUpperCase();
+    }
+    // Default fallback
+    return "U";
+  };
+
   return (
     <motion.header
       initial={{ opacity: 0, y: -10 }}
@@ -96,7 +110,7 @@ export default function Navbar({ onNewTask }: NavbarProps) {
               <Button variant="outline" size="sm" className="relative rounded-full h-8 w-8 p-0 hover:scale-105 transition-transform">
                 <span className="sr-only">Abrir menu do usuário</span>
                 <div className="rounded-full bg-kairos-blue-deep dark:bg-kairos-purple text-white font-medium flex items-center justify-center h-full w-full">
-                  {user?.name.charAt(0).toUpperCase()}
+                  {getUserInitial()}
                 </div>
               </Button>
             </DropdownMenuTrigger>
