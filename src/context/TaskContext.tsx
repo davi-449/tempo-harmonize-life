@@ -21,7 +21,11 @@ export const useTask = () => {
   return context;
 };
 
-export { TaskCategory };
+// Reexportar o tipo Task para uso em outros componentes
+export type { Task };
+
+// Reexportar o tipo TaskCategory para uso em outros componentes
+export type { TaskCategory };
 
 export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const taskManager = useSupabaseTasks();

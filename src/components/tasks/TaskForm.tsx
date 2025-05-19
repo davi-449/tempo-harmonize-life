@@ -56,16 +56,16 @@ export default function TaskForm({ isOpen, onClose, editTask }: TaskFormProps) {
       const taskData = {
         title,
         description,
-        dueDate,
+        due_date: dueDate,
         category,
         priority,
         completed: false,
         // Adicionando novos campos
-        isRecurring,
-        recurrenceType: isRecurring ? recurrenceType : undefined,
-        reminderTime: parseInt(reminderTime),
-        startTime,
-        endTime,
+        is_recurring: isRecurring,
+        recurrence_type: isRecurring ? recurrenceType : undefined,
+        reminder_time: parseInt(reminderTime),
+        start_time: startTime,
+        end_time: endTime,
       };
 
       if (editTask) {

@@ -23,7 +23,7 @@ export default function TaskDetail({ task, isOpen, onClose, onEdit, onDelete }: 
   const { toggleCompleted, updateTask } = useTask();
   const [showPostponeOptions, setShowPostponeOptions] = useState(false);
   const [postponeDate, setPostponeDate] = useState<Date | undefined>(
-    task.dueDate ? new Date(task.dueDate) : undefined
+    task.due_date ? new Date(task.due_date) : undefined
   );
 
   // Tradução de categorias
@@ -95,7 +95,7 @@ export default function TaskDetail({ task, isOpen, onClose, onEdit, onDelete }: 
   
   const handlePostponeConfirm = () => {
     if (postponeDate) {
-      updateTask(task.id, { dueDate: postponeDate });
+      updateTask(task.id, { due_date: postponeDate });
       toast.success('Tarefa adiada com sucesso');
       setShowPostponeOptions(false);
       onClose();
@@ -106,7 +106,7 @@ export default function TaskDetail({ task, isOpen, onClose, onEdit, onDelete }: 
   const postponeToTomorrow = () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    updateTask(task.id, { dueDate: tomorrow });
+    updateTask(task.id, { due_date: tomorrow });
     toast.success('Tarefa adiada para amanhã');
     onClose();
   };
@@ -115,7 +115,7 @@ export default function TaskDetail({ task, isOpen, onClose, onEdit, onDelete }: 
   const postponeToNextWeek = () => {
     const nextWeek = new Date();
     nextWeek.setDate(nextWeek.getDate() + 7);
-    updateTask(task.id, { dueDate: nextWeek });
+    updateTask(task.id, { due_date: nextWeek });
     toast.success('Tarefa adiada para a próxima semana');
     onClose();
   };
@@ -136,11 +136,11 @@ export default function TaskDetail({ task, isOpen, onClose, onEdit, onDelete }: 
             <Badge variant="outline" className={getPriorityColor(task.priority)}>
               Prioridade {getPriorityName(task.priority)}
             </Badge>
-            {task.isRecurring && (
+            {task.is_recurring && (
               <Badge variant="outline">
                 Recorrente: {
-                  task.recurrenceType === 'daily' ? 'Diário' : 
-                  task.recurrenceType === 'weekly' ? 'Semanal' : 'Mensal'
+                  task.recurrence_type === 'daily' ? 'Diário' : 
+                  task.recurrence_type === 'weekly' ? 'Semanal' : 'Mensal'
                 }
               </Badge>
             )}
@@ -161,38 +161,38 @@ export default function TaskDetail({ task, isOpen, onClose, onEdit, onDelete }: 
               <div>
                 <p className="text-sm font-medium">Data de Vencimento</p>
                 <p className="text-sm text-muted-foreground">
-                  {format(new Date(task.dueDate), "PPP", { locale: ptBR })}
+                  {format(new Date(task.due_date), "PPP", { locale: ptBR })}
                 </p>
               </div>
             </div>
             
             {/* Horário */}
-            {task.startTime && (
+            {task.start_time && (
               <div className="flex items-start gap-2">
                 <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
                 <div>
                   <p className="text-sm font-medium">Horário</p>
                   <p className="text-sm text-muted-foreground">
-                    {task.startTime} {task.endTime ? `- ${task.endTime}` : ''}
+                    {task.start_time} {task.end_time ? `- ${task.end_time}` : ''}
                   </p>
                 </div>
               </div>
             )}
             
             {/* Lembrete */}
-            {task.reminderTime !== undefined && (
+            {task.reminder_time !== undefined && (
               <div className="flex items-start gap-2">
                 <AlertCircle className="h-5 w-5 text-muted-foreground mt-0.5" />
                 <div>
                   <p className="text-sm font-medium">Lembrete</p>
                   <p className="text-sm text-muted-foreground">
-                    {task.reminderTime === 0 && 'No momento do evento'}
-                    {task.reminderTime === 5 && '5 minutos antes'}
-                    {task.reminderTime === 15 && '15 minutos antes'}
-                    {task.reminderTime === 30 && '30 minutos antes'}
-                    {task.reminderTime === 60 && '1 hora antes'}
-                    {task.reminderTime === 120 && '2 horas antes'}
-                    {task.reminderTime === 1440 && '1 dia antes'}
+                    {task.reminder_time === 0 && 'No momento do evento'}
+                    {task.reminder_time === 5 && '5 minutos antes'}
+                    {task.reminder_time === 15 && '15 minutos antes'}
+                    {task.reminder_time === 30 && '30 minutos antes'}
+                    {task.reminder_time === 60 && '1 hora antes'}
+                    {task.reminder_time === 120 && '2 horas antes'}
+                    {task.reminder_time === 1440 && '1 dia antes'}
                   </p>
                 </div>
               </div>

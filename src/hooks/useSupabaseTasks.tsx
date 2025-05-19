@@ -54,11 +54,12 @@ export function useSupabaseTasks() {
       }
       
       // Parse dates
-      const parsedTasks = data.map(task => ({
+      const parsedTasks: Task[] = data.map(task => ({
         ...task,
-        due_date: task.due_date ? new Date(task.due_date) : null,
+        due_date: task.due_date ? new Date(task.due_date) : new Date(),
         created_at: new Date(task.created_at),
         updated_at: new Date(task.updated_at),
+        category: task.category as TaskCategory,
       }));
       
       setTasks(parsedTasks);
@@ -87,11 +88,12 @@ export function useSupabaseTasks() {
       
       if (data && data.length > 0) {
         // Parse dates for the newly added task
-        const newTask = {
+        const newTask: Task = {
           ...data[0],
-          due_date: data[0].due_date ? new Date(data[0].due_date) : null,
+          due_date: data[0].due_date ? new Date(data[0].due_date) : new Date(),
           created_at: new Date(data[0].created_at),
           updated_at: new Date(data[0].updated_at),
+          category: data[0].category as TaskCategory,
         };
         
         setTasks(prevTasks => [...prevTasks, newTask]);

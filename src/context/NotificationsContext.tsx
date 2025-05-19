@@ -23,6 +23,9 @@ export const useNotifications = () => {
   return context;
 };
 
+// Reexportar o tipo Notification para uso em outros componentes
+export type { Notification };
+
 export const NotificationsProvider = ({ children }: { children: ReactNode }) => {
   const notificationsManager = useSupabaseNotifications();
   

@@ -115,13 +115,13 @@ export default function TaskList({ tasks, title = 'Tarefas', emptyMessage = 'Nen
                 <div className="flex flex-col xs:flex-row xs:items-center text-xs text-muted-foreground gap-1 xs:gap-2">
                   <div className="flex items-center">
                     <CalendarIcon className="h-3 w-3 mr-1" />
-                    <span>Vencimento: {format(new Date(task.dueDate), "dd/MM/yyyy", { locale: ptBR })}</span>
+                    <span>Vencimento: {format(new Date(task.due_date), "dd/MM/yyyy", { locale: ptBR })}</span>
                   </div>
                   
-                  {task.startTime && (
+                  {task.start_time && (
                     <div className="flex items-center">
                       <Clock className="h-3 w-3 mr-1" />
-                      <span>{task.startTime} {task.endTime ? `- ${task.endTime}` : ''}</span>
+                      <span>{task.start_time} {task.end_time ? `- ${task.end_time}` : ''}</span>
                     </div>
                   )}
                   
@@ -166,7 +166,7 @@ export default function TaskList({ tasks, title = 'Tarefas', emptyMessage = 'Nen
             id: editingTask.id,
             title: editingTask.title,
             description: editingTask.description,
-            dueDate: editingTask.dueDate,
+            dueDate: editingTask.due_date,
             category: editingTask.category,
             priority: editingTask.priority,
           }}
