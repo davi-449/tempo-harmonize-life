@@ -18,7 +18,7 @@ export default function BottomNavigation({ onAddTask }: BottomNavigationProps) {
           className={cn(
             "flex flex-col items-center p-2 text-xs",
             location.pathname === '/dashboard' 
-              ? "text-primary" 
+              ? "text-kairos-blue-deep dark:text-kairos-purple" 
               : "text-muted-foreground"
           )}
         >
@@ -31,7 +31,7 @@ export default function BottomNavigation({ onAddTask }: BottomNavigationProps) {
           className={cn(
             "flex flex-col items-center p-2 text-xs",
             location.pathname === '/calendar' 
-              ? "text-primary" 
+              ? "text-kairos-blue-deep dark:text-kairos-purple" 
               : "text-muted-foreground"
           )}
         >
@@ -41,7 +41,7 @@ export default function BottomNavigation({ onAddTask }: BottomNavigationProps) {
         
         <button 
           onClick={onAddTask}
-          className="flex flex-col items-center justify-center bg-primary text-primary-foreground rounded-full h-14 w-14 -mt-6 shadow-lg"
+          className="flex flex-col items-center justify-center bg-gradient-blue-purple text-white rounded-full h-14 w-14 -mt-6 shadow-lg"
         >
           <Plus className="h-6 w-6" />
         </button>
@@ -51,7 +51,7 @@ export default function BottomNavigation({ onAddTask }: BottomNavigationProps) {
           className={cn(
             "flex flex-col items-center p-2 text-xs",
             location.pathname === '/analytics' 
-              ? "text-primary" 
+              ? "text-kairos-blue-deep dark:text-kairos-purple" 
               : "text-muted-foreground"
           )}
         >
@@ -64,7 +64,7 @@ export default function BottomNavigation({ onAddTask }: BottomNavigationProps) {
           className={cn(
             "flex flex-col items-center p-2 text-xs",
             location.pathname === '/settings' 
-              ? "text-primary" 
+              ? "text-kairos-blue-deep dark:text-kairos-purple" 
               : "text-muted-foreground"
           )}
         >

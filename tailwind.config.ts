@@ -63,22 +63,31 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-        // Task category colors
-        category: {
-          personal: '#E5DEFF',
-          work: '#D3E4FD',
-          fitness: '#F2FCE2',
-          academic: '#FEF7CD',
-          default: '#FFDEE2',
-        },
-        // Dark mode category colors  
-        "category-dark": {
-          personal: '#5D4A9C',
-          work: '#3A5F8A',
-          fitness: '#55803E',
-          academic: '#9C7E23',
-          default: '#9C3D4A',
-        }
+                // Nova paleta de cores do Kairos
+                kairos: {
+                    'blue-deep': '#002D72',
+                    'purple': '#6B5B95',
+                    'blue-light': '#4A90E2',
+                    'dark': '#121A2F',
+                    'white': '#FFFFFF',
+                    'gray-light': '#F5F5F7',
+                },
+                // Task category colors
+                category: {
+                  personal: '#E5DEFF',
+                  work: '#D3E4FD',
+                  fitness: '#F2FCE2',
+                  academic: '#FEF7CD',
+                  default: '#FFDEE2',
+                },
+                // Dark mode category colors  
+                "category-dark": {
+                  personal: '#5D4A9C',
+                  work: '#3A5F8A',
+                  fitness: '#55803E',
+                  academic: '#9C7E23',
+                  default: '#9C3D4A',
+                }
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -102,33 +111,39 @@ export default {
 						height: '0'
 					}
 				},
-        'fade-in': {
-          '0%': {
-            opacity: '0',
-            transform: 'translateY(10px)'
-          },
-          '100%': {
-            opacity: '1',
-            transform: 'translateY(0)'
-          }
-        },
-        'slide-in': {
-          '0%': {
-            transform: 'translateX(100%)',
-            opacity: '0'
-          },
-          '100%': {
-            transform: 'translateX(0)',
-            opacity: '1'
-          }
-        }
+                'fade-in': {
+                  '0%': {
+                    opacity: '0',
+                    transform: 'translateY(10px)'
+                  },
+                  '100%': {
+                    opacity: '1',
+                    transform: 'translateY(0)'
+                  }
+                },
+                'slide-in': {
+                  '0%': {
+                    transform: 'translateX(100%)',
+                    opacity: '0'
+                  },
+                  '100%': {
+                    transform: 'translateX(0)',
+                    opacity: '1'
+                  }
+                }
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-        'fade-in': 'fade-in 0.3s ease-out',
-        'slide-in': 'slide-in 0.4s ease-out'
-			}
+                'fade-in': 'fade-in 0.3s ease-out',
+                'slide-in': 'slide-in 0.4s ease-out'
+			},
+            fontFamily: {
+                'sans': ['SF Pro Display', 'Roboto', 'system-ui', 'sans-serif'],
+            },
+            backgroundImage: {
+                'gradient-blue-purple': 'linear-gradient(90deg, #4A90E2 0%, #6B5B95 100%)',
+            }
 		}
 	},
 	plugins: [require("tailwindcss-animate")],

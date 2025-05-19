@@ -6,7 +6,7 @@
 @layer base {
   :root {
     /* Light mode */
-    --background: 210 40% 98%;
+    --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
@@ -15,16 +15,16 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 248 70% 64%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 222 70% 24%;  /* #002D72 - azul profundo */
+    --primary-foreground: 0 0% 100%; /* #FFFFFF */
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 264 24% 47%; /* #6B5B95 - roxo/lilás */
+    --secondary-foreground: 0 0% 100%;  /* #FFFFFF */
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 248 30% 90%;
+    --accent: 210 74% 59%;  /* #4A90E2 - azul claro */
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
@@ -32,41 +32,41 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 248 70% 64%;
+    --ring: 222 70% 24%;  /* #002D72 - azul profundo */
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    --sidebar-background: 240 23% 97%;  /* #F5F5F7 - cinza claro */
     --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-primary: 222 70% 24%;  /* #002D72 - azul profundo */
+    --sidebar-primary-foreground: 0 0% 100%;  /* #FFFFFF */
     --sidebar-accent: 240 4.8% 95.9%;
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 222 70% 24%;  /* #002D72 - azul profundo */
   }
 
   .dark {
     /* Dark mode */
-    --background: 224 71% 4%;
+    --background: 222 25% 12%;  /* #121A2F - preto azulado */
     --foreground: 210 40% 98%;
 
-    --card: 224 71% 4%;
+    --card: 222 25% 12%;  /* #121A2F - preto azulado */
     --card-foreground: 210 40% 98%;
 
-    --popover: 224 71% 4%;
+    --popover: 222 25% 12%;  /* #121A2F - preto azulado */
     --popover-foreground: 210 40% 98%;
 
-    --primary: 248 60% 64%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 222 70% 24%;  /* #002D72 - azul profundo */
+    --primary-foreground: 0 0% 100%;  /* #FFFFFF */
 
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 264 24% 47%;  /* #6B5B95 - roxo/lilás */
     --secondary-foreground: 210 40% 98%;
 
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 248 20% 25%;
+    --accent: 210 74% 59%;  /* #4A90E2 - azul claro */
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -74,16 +74,16 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 248 60% 64%;
+    --ring: 264 24% 47%;  /* #6B5B95 - roxo/lilás */
 
-    --sidebar-background: 240 5.9% 10%;
+    --sidebar-background: 222 25% 12%;  /* #121A2F - preto azulado */
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-primary: 264 24% 47%;  /* #6B5B95 - roxo/lilás */
+    --sidebar-primary-foreground: 0 0% 100%;  /* #FFFFFF */
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 210 74% 59%;  /* #4A90E2 - azul claro */
   }
 }
 
@@ -93,17 +93,25 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
   }
 }
 
 @layer utilities {
   .task-card {
-    @apply bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-border transition-all hover:shadow-md;
+    @apply bg-white dark:bg-kairos-dark rounded-xl p-4 shadow-sm border border-border transition-all hover:shadow-md;
   }
 
   .category-badge {
     @apply text-xs font-medium px-2.5 py-0.5 rounded-full;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-blue-purple text-transparent bg-clip-text;
+  }
+
+  .kairos-check {
+    @apply text-transparent bg-gradient-blue-purple bg-clip-text;
   }
 }

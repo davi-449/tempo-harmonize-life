@@ -22,7 +22,7 @@ export default function GoogleAuthButton() {
     <Button
       type="button"
       variant="outline"
-      className="w-full bg-white hover:bg-gray-50 text-black border border-gray-300"
+      className="w-full bg-white hover:bg-gray-50 text-black border border-kairos-blue-deep dark:border-kairos-purple"
       onClick={handleGoogleLogin}
       disabled={isLoading}
     >
@@ -30,7 +30,7 @@ export default function GoogleAuthButton() {
         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
       ) : (
         <svg
-          className="mr-2 h-4 w-4"
+          className="mr-2 h-4 w-4 text-kairos-blue-deep"
           aria-hidden="true"
           focusable="false"
           data-prefix="fab"

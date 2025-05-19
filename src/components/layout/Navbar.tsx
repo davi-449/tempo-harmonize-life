@@ -3,13 +3,14 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Calendar, CheckIcon, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ModeToggle } from './ModeToggle';
 import NotificationsMenu from '../notifications/NotificationsMenu';
 import { useNotifications } from '@/context/NotificationsContext';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import Logo from '../ui/Logo';
 
 interface NavbarProps {
   onNewTask: () => void;
@@ -55,10 +56,7 @@ export default function Navbar({ onNewTask }: NavbarProps) {
     >
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center">
-          <Link to="/" className="flex items-center space-x-2 group">
-            <Calendar className="h-6 w-6 text-primary group-hover:scale-110 transition-transform" />
-            <span className="font-semibold text-xl">TempoApp</span>
-          </Link>
+          <Logo />
         </div>
         
         <div className="flex items-center space-x-4">
@@ -97,7 +95,7 @@ export default function Navbar({ onNewTask }: NavbarProps) {
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="relative rounded-full h-8 w-8 p-0 hover:scale-105 transition-transform">
                 <span className="sr-only">Abrir menu do usuário</span>
-                <div className="rounded-full bg-primary text-primary-foreground font-medium flex items-center justify-center h-full w-full">
+                <div className="rounded-full bg-kairos-blue-deep dark:bg-kairos-purple text-white font-medium flex items-center justify-center h-full w-full">
                   {user?.name.charAt(0).toUpperCase()}
                 </div>
               </Button>

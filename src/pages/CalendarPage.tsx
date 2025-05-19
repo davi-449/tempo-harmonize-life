@@ -23,16 +23,16 @@ const CalendarPage = () => {
         {hasGoogleIntegration ? (
           <HealthProductivityCorrelation />
         ) : (
-          <div className="bg-muted/50 rounded-lg p-8 text-center">
+          <div className="bg-white/50 dark:bg-kairos-dark/50 rounded-lg p-8 text-center shadow-sm border border-border">
             <div className="flex flex-col items-center justify-center space-y-3">
-              <Activity className="h-12 w-12 text-muted-foreground" />
+              <Activity className="h-12 w-12 text-kairos-blue-light dark:text-kairos-purple" />
               <div className="space-y-2">
                 <h3 className="text-lg font-medium">Correlacione saúde e produtividade</h3>
                 <p className="text-muted-foreground max-w-lg mx-auto">
                   Conecte sua conta Google para sincronizar dados de saúde do Google Fit e descobrir como seu bem-estar físico afeta sua produtividade.
                 </p>
                 <Button 
-                  className="mt-4" 
+                  className="mt-4 bg-gradient-blue-purple hover:opacity-90 transition-opacity" 
                   onClick={() => navigate('/settings')}
                 >
                   Conectar Google Fit
