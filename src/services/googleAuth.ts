@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
 // Configuração do OAuth do Google
@@ -138,4 +137,79 @@ async function refreshToken(integration: any) {
     console.error('Error in refreshToken:', error);
     return null;
   }
+}
+
+// Add the missing ensureValidToken function
+export const ensureValidToken = async (userId: string): Promise<string | null> => {
+  const tokens = getTokens(userId);
+  if (!tokens) return null;
+
+  // Check if token is expired
+  const now = Math.floor(Date.now() / 1000);
+  if (tokens.expires_at && tokens.expires_at > now) {
+    return tokens.access_token;
+  }
+
+  // Token expired, try to refresh
+  try {
+    const { data, error } = await supabase
+      .from('user_integrations')
+      .select('access_token, refresh_token, token_expires_at')
+      .eq('user_id', userId)
+      .eq('provider', 'google')
+      .single();
+
+    if (error || !data.refresh_token) {
+      console.error('Failed to get refresh token:', error);
+      return null;
+    }
+
+    // Here you would implement the token refresh logic
+    // This is a simplified example - in a real app, you'd call Google's token refresh endpoint
+    const newTokens = await refreshGoogleToken(data.refresh_token);
+    
+    if (newTokens) {
+      await supabase
+        .from('user_integrations')
+        .update({
+          access_token: newTokens.access_token,
+          token_expires_at: new Date(Date.now() + newTokens.expires_in * 1000).toISOString(),
+        })
+        .eq('user_id', userId)
+        .eq('provider', 'google');
+
+      return newTokens.access_token;
+    }
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+  }
+
+  return null;
+};
+
+// Helper function to refresh the Google token
+async function refreshGoogleToken(refreshToken: string) {
+  // In a real implementation, you would call Google's token endpoint
+  // This is a placeholder
+  try {
+    const response = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        client_id: 'YOUR_CLIENT_ID', // Replace with your Google Client ID
+        client_secret: 'YOUR_CLIENT_SECRET', // Replace with your Google Client Secret
+        refresh_token: refreshToken,
+        grant_type: 'refresh_token',
+      }),
+    });
+
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch (error) {
+    console.error('Error refreshing Google token:', error);
+  }
+  return null;
 }

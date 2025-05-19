@@ -3,27 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from './useSupabaseAuth';
 import { toast } from 'sonner';
-
-export type TaskCategory = 'personal' | 'work' | 'fitness' | 'academic';
-
-export interface Task {
-  id: string;
-  title: string;
-  description?: string;
-  due_date: Date;
-  completed: boolean;
-  category: TaskCategory;
-  priority: 'low' | 'medium' | 'high';
-  user_id: string;
-  created_at: Date;
-  updated_at: Date;
-  start_time?: string;
-  end_time?: string;
-  is_recurring?: boolean;
-  recurrence_type?: 'daily' | 'weekly' | 'monthly';
-  reminder_time?: number;
-  google_event_id?: string;
-}
+import { Task, TaskCategory } from '@/context/TaskContext';
 
 export function useSupabaseTasks() {
   const { user, isAuthenticated } = useSupabaseAuth();
@@ -53,14 +33,15 @@ export function useSupabaseTasks() {
         throw error;
       }
       
-      // Parse dates
-      const parsedTasks: Task[] = data.map(task => ({
+      // Parse dates and ensure correct types
+      const parsedTasks = data.map(task => ({
         ...task,
         due_date: task.due_date ? new Date(task.due_date) : new Date(),
         created_at: new Date(task.created_at),
         updated_at: new Date(task.updated_at),
         category: task.category as TaskCategory,
-      }));
+        priority: task.priority as 'low' | 'medium' | 'high',
+      })) as Task[];
       
       setTasks(parsedTasks);
     } catch (error) {
@@ -88,13 +69,14 @@ export function useSupabaseTasks() {
       
       if (data && data.length > 0) {
         // Parse dates for the newly added task
-        const newTask: Task = {
+        const newTask = {
           ...data[0],
           due_date: data[0].due_date ? new Date(data[0].due_date) : new Date(),
           created_at: new Date(data[0].created_at),
           updated_at: new Date(data[0].updated_at),
           category: data[0].category as TaskCategory,
-        };
+          priority: data[0].priority as 'low' | 'medium' | 'high',
+        } as Task;
         
         setTasks(prevTasks => [...prevTasks, newTask]);
         toast.success('Tarefa adicionada com sucesso!');

@@ -17,7 +17,10 @@ const DashboardPage = () => {
       <Dashboard />
       
       <Dialog open={isNewTaskDialogOpen} onOpenChange={setIsNewTaskDialogOpen}>
-        <TaskForm onClose={() => setIsNewTaskDialogOpen(false)} />
+        <TaskForm 
+          isOpen={isNewTaskDialogOpen} 
+          onClose={() => setIsNewTaskDialogOpen(false)} 
+        />
       </Dialog>
     </AppLayout>
   );

@@ -1,47 +1,46 @@
 
-import { useState, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import Navbar from './Navbar';
-import TaskForm from '../tasks/TaskForm';
 import { useAuth } from '@/context/AuthContext';
 import { Navigate } from 'react-router-dom';
+import { Toaster } from '@/components/ui/sonner';
 import BottomNavigation from './BottomNavigation';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
-interface AppLayoutProps {
+export interface AppLayoutProps {
   children: ReactNode;
+  onNewTask?: () => void;
 }
 
-export default function AppLayout({ children }: AppLayoutProps) {
+const AppLayout = ({ children, onNewTask }: AppLayoutProps) => {
   const { isAuthenticated, isLoading } = useAuth();
-  const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
+  
+  // If not authenticated, redirect to login
+  if (!isLoading && !isAuthenticated) {
     return <Navigate to="/" />;
   }
-
+  
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar onNewTask={() => setIsTaskFormOpen(true)} />
+    <div className="min-h-screen bg-background flex flex-col">
+      <Navbar onNewTask={onNewTask || (() => {})} />
       
-      <motion.main 
-        className="flex-1 container mx-auto px-4 py-6 mb-16"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        {children}
-      </motion.main>
+      <AnimatePresence mode="wait">
+        <motion.main 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="container mx-auto px-4 pt-6 pb-24 md:pb-12 grow"
+        >
+          {children}
+        </motion.main>
+      </AnimatePresence>
       
-      <BottomNavigation onAddTask={() => setIsTaskFormOpen(true)} />
-      <TaskForm isOpen={isTaskFormOpen} onClose={() => setIsTaskFormOpen(false)} />
+      <BottomNavigation />
+      
+      <Toaster />
     </div>
   );
-}
+};
+
+export default AppLayout;

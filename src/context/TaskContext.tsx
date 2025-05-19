@@ -1,6 +1,27 @@
 
 import { createContext, useContext, ReactNode } from 'react';
-import { useSupabaseTasks, Task, TaskCategory } from '@/hooks/useSupabaseTasks';
+import { useSupabaseTasks } from '@/hooks/useSupabaseTasks';
+
+export type TaskCategory = 'personal' | 'work' | 'fitness' | 'academic';
+
+export interface Task {
+  id: string;
+  title: string;
+  description?: string;
+  due_date: Date;
+  completed: boolean;
+  category: TaskCategory;
+  priority: 'low' | 'medium' | 'high';
+  user_id: string;
+  created_at: Date;
+  updated_at: Date;
+  start_time?: string;
+  end_time?: string;
+  is_recurring?: boolean;
+  recurrence_type?: 'daily' | 'weekly' | 'monthly';
+  reminder_time?: number;
+  google_event_id?: string;
+}
 
 interface TaskContextType {
   tasks: Task[];
@@ -9,6 +30,7 @@ interface TaskContextType {
   updateTask: (id: string, updates: Partial<Omit<Task, 'id' | 'user_id'>>) => Promise<void>;
   deleteTask: (id: string) => Promise<void>;
   toggleCompleted: (id: string) => Promise<void>;
+  refreshTasks: () => Promise<void>;
 }
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -20,12 +42,6 @@ export const useTask = () => {
   }
   return context;
 };
-
-// Reexportar o tipo Task para uso em outros componentes
-export type { Task };
-
-// Reexportar o tipo TaskCategory para uso em outros componentes
-export type { TaskCategory };
 
 export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const taskManager = useSupabaseTasks();

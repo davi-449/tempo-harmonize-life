@@ -3,7 +3,7 @@ import { Task, TaskCategory } from '../context/TaskContext';
 
 export const getTasksByDateRange = (tasks: Task[], startDate: Date, endDate: Date): Task[] => {
   return tasks.filter(task => {
-    const taskDate = new Date(task.dueDate);
+    const taskDate = new Date(task.due_date);
     return taskDate >= startDate && taskDate <= endDate;
   });
 };
@@ -22,8 +22,8 @@ export const getPendingTasks = (tasks: Task[]): Task[] => {
 
 export const sortTasksByDueDate = (tasks: Task[], ascending = true): Task[] => {
   return [...tasks].sort((a, b) => {
-    const dateA = new Date(a.dueDate).getTime();
-    const dateB = new Date(b.dueDate).getTime();
+    const dateA = new Date(a.due_date).getTime();
+    const dateB = new Date(b.due_date).getTime();
     return ascending ? dateA - dateB : dateB - dateA;
   });
 };
@@ -31,7 +31,7 @@ export const sortTasksByDueDate = (tasks: Task[], ascending = true): Task[] => {
 export const sortTasksByPriority = (tasks: Task[]): Task[] => {
   const priorityOrder = { high: 0, medium: 1, low: 2 };
   return [...tasks].sort((a, b) => {
-    return priorityOrder[a.priority] - priorityOrder[b.priority];
+    return priorityOrder[a.priority as 'high' | 'medium' | 'low'] - priorityOrder[b.priority as 'high' | 'medium' | 'low'];
   });
 };
 
@@ -43,7 +43,7 @@ export const getTasksDueToday = (tasks: Task[]): Task[] => {
   tomorrow.setDate(tomorrow.getDate() + 1);
   
   return tasks.filter(task => {
-    const dueDate = new Date(task.dueDate);
+    const dueDate = new Date(task.due_date);
     dueDate.setHours(0, 0, 0, 0);
     return dueDate.getTime() === today.getTime() && !task.completed;
   });
@@ -54,7 +54,7 @@ export const getOverdueTasks = (tasks: Task[]): Task[] => {
   today.setHours(0, 0, 0, 0);
   
   return tasks.filter(task => {
-    const dueDate = new Date(task.dueDate);
+    const dueDate = new Date(task.due_date);
     dueDate.setHours(0, 0, 0, 0);
     return dueDate < today && !task.completed;
   });
@@ -90,7 +90,7 @@ export const getCategoryDistribution = (tasks: Task[]): Record<TaskCategory, num
   };
   
   tasks.forEach(task => {
-    distribution[task.category]++;
+    distribution[task.category as TaskCategory]++;
   });
   
   return distribution;
